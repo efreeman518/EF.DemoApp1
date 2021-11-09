@@ -1,0 +1,11 @@
+{
+rC:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\Configuration\EntityBaseConfiguration.csutf-8y
+pC:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\Configuration\TodoItemConfiguration.csutf-8f
+]C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\DbContextFactory.csutf-8f
+]C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\MigrationSupport.csutf-8}
+tC:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\Migrations\20210623215531_InitialCreate.csutf-8ˆ
+}C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\Migrations\20210623215531_InitialCreate.Designer.csutf-8{
+pC:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\Migrations\TodoContextModelSnapshot.csutf-8a
+XC:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\TodoContext.csutf-8•
+‰C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\obj\Debug\net5.0\.NETCoreApp,Version=v5.0.AssemblyAttributes.csutf-8‰
+~C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Data\obj\Debug\net5.0\Infrastructure.Data.AssemblyInfo.csutf-8

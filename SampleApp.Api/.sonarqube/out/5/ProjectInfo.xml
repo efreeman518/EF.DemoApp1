@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
+  <ProjectName>Infrastructure.Repositories</ProjectName>
+  <ProjectLanguage>C#</ProjectLanguage>
+  <ProjectType>Product</ProjectType>
+  <ProjectGuid>6c7ba000-5af1-48e8-8a43-be01aab5c048</ProjectGuid>
+  <FullPath>C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Repositories\Infrastructure.Repositories.csproj</FullPath>
+  <IsExcluded>false</IsExcluded>
+  <AnalysisResults>
+    <AnalysisResult Id="FilesToAnalyze" Location="C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\SampleApp.Api\.sonarqube\conf\5\FilesToAnalyze.txt" />
+  </AnalysisResults>
+  <AnalysisSettings>
+    <Property Name="sonar.cs.roslyn.reportFilePaths">C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Repositories\bin\Debug\net5.0\Infrastructure.Repositories.dll.RoslynCA.json|C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\Infrastructure.Repositories\bin\Debug\net5.0\Infrastructure.Repositories.dll.RoslynCA.json</Property>
+    <Property Name="sonar.cs.analyzer.projectOutPaths">C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\SampleApp.Api\.sonarqube\out\5</Property>
+  </AnalysisSettings>
+  <Configuration>Debug</Configuration>
+  <Platform>AnyCPU</Platform>
+  <TargetFramework>net5.0</TargetFramework>
+</ProjectInfo>

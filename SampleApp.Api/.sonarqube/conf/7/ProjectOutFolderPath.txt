@@ -1,0 +1,1 @@
+C:\Users\Eben\source\repos\Veracity\ECS\ECS.SampleApp\SampleApp.Api\.sonarqube\out\7
