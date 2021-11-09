@@ -13,11 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EF.Packages.1\Infrastructure.Utility\Infrastructure.Utility.csproj" />
     <ProjectReference Include="..\Application.Contracts\Application.Contracts.csproj" />
     <ProjectReference Include="..\Domain.Rules\Domain.Rules.csproj" />
     <ProjectReference Include="..\Domain.Shared\Domain.Shared.csproj" />
     <ProjectReference Include="..\Infrastructure.Repositories\Infrastructure.Repositories.csproj" />
+    <ProjectReference Include="..\Nuget\Infrastructure.Utility\Infrastructure.Utility.csproj" />
   </ItemGroup>
 
 </Project>
