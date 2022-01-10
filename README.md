@@ -6,6 +6,7 @@
 2.	Run tests
 
 # Notes
+1. Started from Microsoft's Todo sample api (https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-6.0&tabs=visual-studio)
 1. This sample uses Entity Framework Core in-memory DbContext, so restarting the app clears the DB
 2. This solution provides a possible starting template for building service apis and is not production-ready (in-memory database, no authentication, etc)
 
