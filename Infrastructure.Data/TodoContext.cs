@@ -1,7 +1,6 @@
 ﻿using Domain.Model;
-using ECS.Infrastructure.Data;
-using Infrastructure.Data.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Package.Infrastructure.Data;
 using System;
 using System.Linq;
 
@@ -39,7 +38,6 @@ public class TodoContext : DbContextBase
         }
 
         //table configurations
-        //modelBuilder.ApplyConfiguration(new TodoItemConfiguration());
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TodoContext).Assembly);
     }
 

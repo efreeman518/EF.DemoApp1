@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Infrastructure.Utility.Extensions;
+namespace Package.Infrastructure.Utility.Extensions;
 
 public static class LoggerExtensions
 {
@@ -41,11 +41,14 @@ public static class LoggerExtensions
             logValues.Add(a.Value);
         });
 
+#pragma warning disable CA2254 // Template should be a static expression
+
         //structured logging - logTemplate {} items must match the values in logValues
         switch (logLevel)
         {
             case LogLevel.Critical:
                 logger.LogCritical(eventId, exception, logTemplate, logValues.ToArray());
+
                 break;
             case LogLevel.Debug:
                 logger.LogDebug(eventId, exception, logTemplate, logValues.ToArray());
@@ -63,5 +66,8 @@ public static class LoggerExtensions
                 logger.LogWarning(eventId, exception, logTemplate, logValues.ToArray());
                 break;
         }
+
+#pragma warning restore CA2254 // Template should be a static expression
+
     }
 }

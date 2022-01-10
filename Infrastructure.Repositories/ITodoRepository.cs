@@ -1,5 +1,5 @@
 ﻿using Domain.Model;
-using ECS.Infrastructure.Data;
+using Package.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;

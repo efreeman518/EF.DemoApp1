@@ -1,9 +1,7 @@
 ﻿using Application.Contracts.Model;
-using ECS.Infrastructure.Utility.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;

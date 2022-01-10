@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data;
+namespace Package.Infrastructure.Data;
 
 public abstract class DbContextBase : DbContext
 {
@@ -30,7 +30,7 @@ public abstract class DbContextBase : DbContext
             if (entity.State != EntityState.Added) continue;
 
             // Assign the entity Id if not already defined
-            if (entity.Entity.Id == default)
+            if (entity.Entity.Id == Guid.Empty)
             {
                 entity.Entity.Id = Guid.NewGuid();
             }

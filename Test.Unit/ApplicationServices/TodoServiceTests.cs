@@ -2,7 +2,6 @@ using Application.Contracts.Model;
 using Application.Services;
 using Domain.Model;
 using Domain.Shared.Enums;
-using ECS.Infrastructure.Utility.Exceptions;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Package.Infrastructure.Utility.Exceptions;
 using System;
 using System.Linq.Expressions;
 using System.Threading;
@@ -104,7 +104,7 @@ public class TodoServiceTests : UnitTestBase
 
         //create
         todo = await svc.AddItemAsync(todo);
-        Assert.IsTrue(todo.Id != default);
+        Assert.IsTrue(todo.Id != Guid.Empty);
         var id = todo.Id;
 
         //retrieve

@@ -1,6 +1,6 @@
 ﻿
 using Domain.Shared.Enums;
-using ECS.Infrastructure.Data;
+using Package.Infrastructure.Data;
 
 namespace Domain.Model;
 

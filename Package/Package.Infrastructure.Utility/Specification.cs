@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Infrastructure.Utility;
+namespace Package.Infrastructure.Utility;
 
 public interface ISpecification<in T>
 {

@@ -1,6 +1,6 @@
-﻿using ECS.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Package.Infrastructure.Data;
 
 namespace Infrastructure.Data.Configuration;
 

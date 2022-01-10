@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Infrastructure.Data;
+namespace Package.Infrastructure.Data;
 
 public class EntityBase : IAuditable
 {

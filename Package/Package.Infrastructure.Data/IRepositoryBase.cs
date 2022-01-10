@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data;
+namespace Package.Infrastructure.Data;
 
 public interface IRepositoryBase
 {

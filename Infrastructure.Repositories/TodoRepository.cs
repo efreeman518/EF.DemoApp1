@@ -1,7 +1,7 @@
 ﻿using Domain.Model;
-using ECS.Infrastructure.Data;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Package.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
