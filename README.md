@@ -7,6 +7,7 @@
 
 # Notes
 1. Started from Microsoft's Todo sample api (https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-6.0&tabs=visual-studio)
-1. This sample uses Entity Framework Core in-memory DbContext, so restarting the app clears the DB
-2. This solution provides a possible starting template for building service apis and is not production-ready (in-memory database, no authentication, etc)
+2. This sample uses Entity Framework Core in-memory DbContext, so restarting the app clears the DB
+3. This solution provides a possible starting template for building service apis and is not production-ready (in-memory database, no authentication, etc)
+4. Package.Infrastructure projects are meant to reside in a nuget package feed, but for simplicity of this sample, the source projects are included and referenced
 
