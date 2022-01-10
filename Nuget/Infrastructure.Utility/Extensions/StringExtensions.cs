@@ -1,15 +1,14 @@
-﻿namespace Infrastructure.Utility.Extensions
+﻿namespace Infrastructure.Utility.Extensions;
+
+public static class StringExtensions
 {
-    public static class StringExtensions
+    public static string ToCamelCase(this string input)
     {
-        public static string ToCamelCase(this string input)
-        {
-            if (string.IsNullOrEmpty(input)) return input;
+        if (string.IsNullOrEmpty(input)) return input;
 
-            var first = input.Substring(0, 1).ToLower();
-            if (input.Length == 1) return first;
+        var first = input.Substring(0, 1).ToLower();
+        if (input.Length == 1) return first;
 
-            return first + input[1..];
-        }
+        return first + input[1..];
     }
 }

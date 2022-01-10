@@ -14,119 +14,117 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Infrastructure.Utility.Exceptions;
 
-namespace Application.Services
+namespace Application.Services;
+
+public class TodoService : ServiceBase, ITodoService
 {
-    public class TodoService : ServiceBase, ITodoService
+    private readonly TodoServiceSettings _settings;
+    private readonly ITodoRepository _repository;
+    private readonly IMapper _mapper;
+
+    public TodoService(ILogger<TodoService> logger, IOptions<TodoServiceSettings> settings, ITodoRepository repository, IMapper mapper)
+        : base(logger)
     {
-        private readonly TodoServiceSettings _settings; //IOptions<TodoServiceSettings> settings
-        private readonly ITodoRepository _repository;
-        private readonly IMapper _mapper;
+        _settings = settings.Value;
+        _repository = repository;
+        _mapper = mapper;
+    }
 
-        public TodoService(ILogger<TodoService> logger, IOptions<TodoServiceSettings> settings, ITodoRepository repository, IMapper mapper) 
-            : base(logger)
+    public async Task<PagedResponse<TodoItemDto>> GetItemsAsync(int pageSize = 10, int pageIndex = 0)
+    {
+        Logger.Log(LogLevel.Information, "GetItemsAsync - pageSize:{pageSize} pageIndex:{pageIndex}", pageSize, pageIndex);
+
+        _ = _settings.IntValue;
+
+        //return mapped domain -> app
+        return new PagedResponse<TodoItemDto>
         {
-            _settings = settings.Value;
-            _repository = repository;
-            _mapper = mapper;
+            PageSize = pageSize,
+            PageIndex = pageIndex,
+            Data = _mapper.Map<List<TodoItem>, List<TodoItemDto>>(await _repository.GetItemsAsync(pageSize, pageIndex)),
+            Total = await _repository.GetItemsCountAsync()
+        };
+    }
 
-            var initValue = _settings.IntValue;
-            initValue.GetHashCode();
-        }
+    public async Task<TodoItemDto> GetItemAsync(Guid id)
+    {
+        Logger.Log(LogLevel.Information, "GetItemAsync - id:{id}", id);
 
-        public async Task<PagedResponse<TodoItemDto>> GetItemsAsync(int pageSize = 10, int pageIndex = 0)
-        {
-            Logger.Log(LogLevel.Information, "GetItemsAsync - pageSize:{pageSize} pageIndex:{pageIndex}", pageSize, pageIndex);
-            
-            //return mapped domain -> app
-            return new PagedResponse<TodoItemDto>
-            {
-                PageSize = pageSize,
-                PageIndex = pageIndex,
-                Data = _mapper.Map<List<TodoItem>, List<TodoItemDto>>(await _repository.GetItemsAsync(pageSize, pageIndex)),
-                Total = await _repository.GetItemsCountAsync()
-            };
-        }
+        var todo = await _repository.GetItemAsync(t => t.Id == id);
+        if (todo == null) throw new NotFoundException($"TodoItem.Id '{id}' not found.");
 
-        public async Task<TodoItemDto> GetItemAsync(Guid id)
-        {
-            Logger.Log(LogLevel.Information, "GetItemAsync - id:{id}", id);
+        //return mapped domain -> app
+        return _mapper.Map<TodoItem, TodoItemDto>(todo);
+    }
 
-            var todo = await _repository.GetItemAsync(t => t.Id == id);
-            if(todo == null) throw new NotFoundException($"TodoItem.Id '{id}' not found.");
+    public async Task<TodoItemDto> AddItemAsync(TodoItemDto dto)
+    {
+        Logger.Log(LogLevel.Information, "AddItemAsync Start - {TodoItemDto}", JsonSerializer.Serialize(dto));
 
-            //return mapped domain -> app
-            return _mapper.Map<TodoItem, TodoItemDto>(todo);
-        }
+        //validate app model
+        if (dto.Name.Length < DomainConstants.RULE_NAME_LENGTH)
+            throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_LENGTH_MESSAGE} {DomainConstants.RULE_NAME_LENGTH}");
+        if (await _repository.ExistsAsync(t => t.Name == dto.Name))
+            throw new ValidationException($"{AppConstants.ERROR_ITEM_EXISTS}: '{dto.Name}'");
 
-        public async Task<TodoItemDto> AddItemAsync(TodoItemDto dto)
-        {
-            Logger.Log(LogLevel.Information, "AddItemAsync Start - {TodoItemDto}", JsonSerializer.Serialize(dto));
+        //map app -> domain
+        var todo = _mapper.Map<TodoItemDto, TodoItem>(dto);
 
-            //validate app model
-            if (dto.Name.Length < DomainConstants.RULE_NAME_LENGTH) 
-                throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_LENGTH_MESSAGE} {DomainConstants.RULE_NAME_LENGTH}");
-            if (await _repository.ExistsAsync(t => t.Name == dto.Name)) 
-                throw new ValidationException($"{AppConstants.ERROR_ITEM_EXISTS}: '{dto.Name}'");
+        //validate domain model (using Rule classes)
+        if (!new TodoNameLengthRule(DomainConstants.RULE_NAME_LENGTH).IsSatisfiedBy(todo))
+            throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_LENGTH_MESSAGE} {DomainConstants.RULE_NAME_LENGTH}.");
+        if (!new TodoNameRegexRule(DomainConstants.RULE_NAME_REGEX).IsSatisfiedBy(todo))
+            throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_INVALID_MESSAGE}; '{DomainConstants.RULE_NAME_REGEX}'.");
+        if (!new TodoCompositeRule(DomainConstants.RULE_NAME_LENGTH, DomainConstants.RULE_NAME_REGEX).IsSatisfiedBy(todo))
+            throw new ValidationException(AppConstants.ERROR_RULE_INVALID_MESSAGE);
 
-            //map app -> domain
-            var todo = _mapper.Map<TodoItemDto, TodoItem>(dto);
+        todo = _repository.AddItem(todo);
+        await _repository.SaveChangesAsync("userId1");
 
-            //validate domain model (using Rule classes)
-            if (!new TodoNameLengthRule(DomainConstants.RULE_NAME_LENGTH).IsSatisfiedBy(todo)) 
-                throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_LENGTH_MESSAGE} {DomainConstants.RULE_NAME_LENGTH}.");
-            if (!new TodoNameRegexRule(DomainConstants.RULE_NAME_REGEX).IsSatisfiedBy(todo)) 
-                throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_INVALID_MESSAGE}; '{DomainConstants.RULE_NAME_REGEX}'.");
-            if (!new TodoCompositeRule(DomainConstants.RULE_NAME_LENGTH, DomainConstants.RULE_NAME_REGEX).IsSatisfiedBy(todo)) 
-                throw new ValidationException(AppConstants.ERROR_RULE_INVALID_MESSAGE);
+        Logger.Log(LogLevel.Information, "AddItemAsync Complete - {TodoItem}", JsonSerializer.Serialize(todo));
 
-            todo = _repository.AddItem(todo);
-            await _repository.SaveChangesAsync("userId1");
+        //return mapped domain -> app
+        return _mapper.Map<TodoItem, TodoItemDto>(todo);
+    }
 
-            Logger.Log(LogLevel.Information, "AddItemAsync Complete - {TodoItem}", JsonSerializer.Serialize(todo));
+    public async Task<TodoItemDto?> UpdateItemAsync(TodoItemDto dto)
+    {
+        Logger.Log(LogLevel.Information, "UpdateItemAsync Start - {TodoItemDto}", JsonSerializer.Serialize(dto));
 
-            //return mapped domain -> app
-            return _mapper.Map<TodoItem, TodoItemDto>(todo);
-        }
+        //retrieve existing
+        var dbTodo = await _repository.GetItemAsync(t => t.Id == dto.Id);
+        if (dbTodo == null) throw new NotFoundException($"{AppConstants.ERROR_ITEM_NOTFOUND}: {dto.Id}");
 
-        public async Task<TodoItemDto?> UpdateItemAsync(TodoItemDto dto)
-        {
-            Logger.Log(LogLevel.Information, "UpdateItemAsync Start - {TodoItemDto}", JsonSerializer.Serialize(dto));
+        var updateTodo = _mapper.Map<TodoItemDto, TodoItem>(dto);
 
-            //retrieve existing
-            var dbTodo = await _repository.GetItemAsync(t => t.Id == dto.Id);
-            if (dbTodo == null) throw new NotFoundException($"{AppConstants.ERROR_ITEM_NOTFOUND}: {dto.Id}");
+        //update 
+        dbTodo.Name = updateTodo.Name;
+        dbTodo.IsComplete = updateTodo.IsComplete;
+        dbTodo.Status = updateTodo.Status;
 
-            var updateTodo = _mapper.Map<TodoItemDto, TodoItem>(dto);
+        //validate domain model (using Rule classes)
+        if (!new TodoNameLengthRule(DomainConstants.RULE_NAME_LENGTH).IsSatisfiedBy(dbTodo))
+            throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_LENGTH_MESSAGE} {DomainConstants.RULE_NAME_LENGTH}.");
+        if (!new TodoNameRegexRule(DomainConstants.RULE_NAME_REGEX).IsSatisfiedBy(dbTodo))
+            throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_INVALID_MESSAGE}; '{DomainConstants.RULE_NAME_REGEX}'.");
+        if (!new TodoCompositeRule(DomainConstants.RULE_NAME_LENGTH, DomainConstants.RULE_NAME_REGEX).IsSatisfiedBy(dbTodo))
+            throw new ValidationException(AppConstants.ERROR_RULE_INVALID_MESSAGE);
 
-            //update 
-            dbTodo.Name = updateTodo.Name;
-            dbTodo.IsComplete = updateTodo.IsComplete;
-            dbTodo.Status = updateTodo.Status;
+        _repository.UpdateItem(dbTodo); //update full record
 
-            //validate domain model (using Rule classes)
-            if (!new TodoNameLengthRule(DomainConstants.RULE_NAME_LENGTH).IsSatisfiedBy(dbTodo))
-                throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_LENGTH_MESSAGE} {DomainConstants.RULE_NAME_LENGTH}.");
-            if (!new TodoNameRegexRule(DomainConstants.RULE_NAME_REGEX).IsSatisfiedBy(dbTodo))
-                throw new ValidationException($"{AppConstants.ERROR_RULE_NAME_INVALID_MESSAGE}; '{DomainConstants.RULE_NAME_REGEX}'.");
-            if (!new TodoCompositeRule(DomainConstants.RULE_NAME_LENGTH, DomainConstants.RULE_NAME_REGEX).IsSatisfiedBy(dbTodo))
-                throw new ValidationException(AppConstants.ERROR_RULE_INVALID_MESSAGE);
+        await _repository.SaveChangesAsync("userId1");
 
-            _repository.UpdateItem(dbTodo); //update full record
+        Logger.Log(LogLevel.Information, "UpdateItemAsync Complete - {TodoItem}", JsonSerializer.Serialize(dbTodo));
 
-            await _repository.SaveChangesAsync("userId1");
+        //return mapped domain -> app 
+        return _mapper.Map<TodoItem, TodoItemDto>(dbTodo);
+    }
 
-            Logger.Log(LogLevel.Information, "UpdateItemAsync Complete - {TodoItem}", JsonSerializer.Serialize(dbTodo));
+    public async Task DeleteItemAsync(Guid id)
+    {
+        Logger.Log(LogLevel.Information, "DeleteItemAsync - {id}", id);
 
-            //return mapped domain -> app 
-            return _mapper.Map<TodoItem, TodoItemDto>(dbTodo);
-        }
-
-        public async Task DeleteItemAsync(Guid id)
-        {
-            Logger.Log(LogLevel.Information, "DeleteItemAsync - {id}", id);
-
-            _repository.DeleteItem(id);
-            await _repository.SaveChangesAsync("userId1");
-        }
+        _repository.DeleteItem(id);
+        await _repository.SaveChangesAsync("userId1");
     }
 }

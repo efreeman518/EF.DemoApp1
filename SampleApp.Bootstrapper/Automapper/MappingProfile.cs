@@ -2,15 +2,14 @@
 using AutoMapper;
 using Domain.Model;
 
-namespace SampleApp.Bootstrapper.Automapper
+namespace SampleApp.Bootstrapper.Automapper;
+
+public class MappingProfile : Profile
 {
-    public class MappingProfile : Profile
+    //domain <-> application
+    public MappingProfile()
     {
-        //domain <-> application
-        public MappingProfile()
-        {
-            CreateMap<TodoItem, TodoItemDto>()
-               .ReverseMap();
-        }
+        CreateMap<TodoItem, TodoItemDto>()
+           .ReverseMap();
     }
 }

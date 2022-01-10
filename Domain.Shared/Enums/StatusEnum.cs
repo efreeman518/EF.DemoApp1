@@ -1,11 +1,10 @@
-﻿namespace Domain.Shared.Enums
+﻿namespace Domain.Shared.Enums;
+
+public enum Status
 {
-    public enum Status
-    {
-        None = 0,
-        Created = 1,
-        Accepted = 2,
-        InProgress = 3,
-        Completed = 4
-    }
+    None = 0,
+    Created = 1,
+    Accepted = 2,
+    InProgress = 3,
+    Completed = 4
 }

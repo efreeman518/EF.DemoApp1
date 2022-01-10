@@ -8,50 +8,49 @@ using Microsoft.Extensions.DependencyInjection;
 using SampleApp.Bootstrapper.Automapper;
 using System;
 
-namespace SampleApp.Bootstrapper
+namespace SampleApp.Bootstrapper;
+
+public class Startup
 {
-    public class Startup
+    public readonly IConfiguration _config;
+
+    public Startup(IConfiguration config)
     {
-        public readonly IConfiguration _config;
+        _config = config;
+    }
 
-        public Startup(IConfiguration config)
+    public void ConfigureServices(IServiceCollection services)
+    {
+        //Application Services
+        services.AddTransient<ITodoService, TodoService>();
+        services.Configure<TodoServiceSettings>(_config.GetSection("TodoServiceSettings"));
+
+        //AutoMapper Configuration - map domain <-> application 
+        ConfigureAutomapper.Configure(services);
+
+        //Infrastructure Services
+        services.AddTransient<ITodoRepository, TodoRepository>();
+
+        //Database
+        string connectionString = _config.GetConnectionString("TodoContext");
+        if (string.IsNullOrEmpty(connectionString) || connectionString == "UseInMemoryDatabase")
         {
-            _config = config;
+            //InMemory for dev; requires Microsoft.EntityFrameworkCore.InMemory
+            services.AddDbContextPool<TodoContext>(opt => opt.UseInMemoryDatabase("TodoContext"));
+        }
+        else
+        {
+            services.AddDbContextPool<TodoContext>(options =>
+                options.UseSqlServer(connectionString,
+                    //retry strategy does not support user initiated transactions 
+                    sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null);
+                    })
+                );
         }
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            //Application Services
-            services.AddTransient<ITodoService, TodoService>();
-            services.Configure<TodoServiceSettings>(_config.GetSection("TodoServiceSettings"));
-
-            //AutoMapper Configuration - map domain <-> application 
-            ConfigureAutomapper.Configure(services);
-
-            //Infrastructure Services
-            services.AddTransient<ITodoRepository, TodoRepository>();
-
-            //Database
-            string connectionString = _config.GetConnectionString("TodoContext");
-            if (string.IsNullOrEmpty(connectionString) || connectionString == "UseInMemoryDatabase")
-            {
-                //InMemory for dev; requires Microsoft.EntityFrameworkCore.InMemory
-                services.AddDbContextPool<TodoContext>(opt => opt.UseInMemoryDatabase("TodoContext"));
-            }
-            else
-            {
-                services.AddDbContextPool<TodoContext>(options =>
-                    options.UseSqlServer(connectionString,
-                        //retry strategy does not support user initiated transactions 
-                        sqlServerOptionsAction: sqlOptions =>
-                        {
-                            sqlOptions.EnableRetryOnFailure(maxRetryCount: 5,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
-                            errorNumbersToAdd: null);
-                        })
-                    );
-            }
-
-        }
     }
 }

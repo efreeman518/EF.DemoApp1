@@ -2,27 +2,26 @@
 using System;
 using System.IO;
 
-namespace Test.Integration
+namespace Test.Integration;
+
+public static class Utility
 {
-    public static class Utility
+    public static readonly IConfigurationRoot Config = BuildConfiguration();
+
+    public static IConfigurationRoot BuildConfiguration()
     {
-        public static readonly IConfigurationRoot Config = BuildConfiguration();
+        var devEnvironmentVariable = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+        var isDevelopment = devEnvironmentVariable?.ToLower() == "development";
 
-        public static IConfigurationRoot BuildConfiguration()
-        {
-            var devEnvironmentVariable = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-            var isDevelopment = devEnvironmentVariable?.ToLower() == "development";
+        var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            .AddEnvironmentVariables()
+            .AddJsonFile("appsettings.json");
 
-            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json");
+        if (isDevelopment) builder.AddUserSecrets<ServiceTestBase>();
 
-            if (isDevelopment) builder.AddUserSecrets<ServiceTestBase>();
+        IConfigurationRoot config = builder.Build();
 
-            IConfigurationRoot config = builder.Build();
-
-            return config;
-        }
-
+        return config;
     }
+
 }

@@ -1,8 +1,7 @@
-﻿namespace Application.Services
+﻿namespace Application.Services;
+
+public class TodoServiceSettings
 {
-    public class TodoServiceSettings
-    {
-        public string? StringValue { get; set; }
-        public int? IntValue { get; set; }
-    }
+    public string? StringValue { get; set; }
+    public int? IntValue { get; set; }
 }

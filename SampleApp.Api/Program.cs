@@ -3,35 +3,34 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace SampleApp.Api
+namespace SampleApp.Api;
+
+public class Program
 {
-    public class Program
+    protected Program() { }
+
+    public static async Task Main(string[] args)
     {
-        protected Program() { }
+        IHost host = CreateHostBuilder(args).Build();
+        await host.RunAsync();
+    }
 
-        public static async Task Main(string[] args)
-        {
-            IHost host = CreateHostBuilder(args).Build();
-            await host.RunAsync();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.ConfigureLogging(ConfigureLogger);
-                    webBuilder.UseStartup<Startup>();
-                });
-
-        static void ConfigureLogger(WebHostBuilderContext hostingContext, ILoggingBuilder logging)
-        {
-            logging.AddApplicationInsights();
-
-            if (hostingContext.HostingEnvironment.IsDevelopment())
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
             {
-                logging.AddDebug();
-                logging.AddConsole(); 
-            }
+                webBuilder.ConfigureLogging(ConfigureLogger);
+                webBuilder.UseStartup<Startup>();
+            });
+
+    static void ConfigureLogger(WebHostBuilderContext hostingContext, ILoggingBuilder logging)
+    {
+        logging.AddApplicationInsights();
+
+        if (hostingContext.HostingEnvironment.IsDevelopment())
+        {
+            logging.AddDebug();
+            logging.AddConsole();
         }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data
+namespace Infrastructure.Data;
+
+public interface IRepositoryBase
 {
-    public interface IRepositoryBase
-    {
-        Task<int> SaveChangesAsync(string auditId, CancellationToken cancellationToken = default);
-    }
+    Task<int> SaveChangesAsync(string auditId, CancellationToken cancellationToken = default);
 }

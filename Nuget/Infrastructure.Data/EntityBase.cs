@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace Infrastructure.Data
+namespace Infrastructure.Data;
+
+public class EntityBase : IAuditable
 {
-    public class EntityBase : IAuditable
-    {
-        public Guid Id { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public string CreatedBy { get; set; } = null!;
-        public DateTime UpdatedDate { get; set; }
-        public string? UpdatedBy { get; set; }
-    }
+    public Guid Id { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public string CreatedBy { get; set; } = null!;
+    public DateTime UpdatedDate { get; set; }
+    public string? UpdatedBy { get; set; }
 }

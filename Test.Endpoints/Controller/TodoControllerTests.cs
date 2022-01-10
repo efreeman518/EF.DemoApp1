@@ -6,78 +6,77 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Test.Endpoints.Controller
+namespace Test.Endpoints.Controller;
+
+[TestClass]
+public class TodoControllerTests : EndpointTestBase
 {
-    [TestClass]
-    public class TodoControllerTests : EndpointTestBase
+    private static HttpClient _client = null!;
+
+    [ClassInitialize]
+    public static void ClassInit(TestContext testContext)
     {
-        private static HttpClient _client = null!;
+        Console.WriteLine(testContext.TestName);
 
-        [ClassInitialize]
-        public static void ClassInit(TestContext testContext)
+        //Arrange for all tests
+        _client = Utility.GetClient<SampleApp.Api.Startup>();
+    }
+
+    //html endpoints return success and correct content type
+    [DataTestMethod]
+    [DataRow("swagger", HttpStatusCode.OK, "text/html; charset=utf-8")]
+    [DataRow("index.html", HttpStatusCode.OK, "text/html")]
+    public async Task Get_BasicEndpoints_pass(string url, HttpStatusCode expectedStatusCode, string contentType)
+    {
+        // Act
+        (HttpResponseMessage httpResponse, _) = await _client.HttpRequestAndResponse<string, IHtmlDocument>(HttpMethod.Get, url, null);
+
+        // Assert
+        httpResponse.EnsureSuccessStatusCode(); // Status Code 200-299
+        Assert.AreEqual(expectedStatusCode, httpResponse.StatusCode);
+        Assert.AreEqual(contentType, httpResponse.Content.Headers.ContentType?.ToString());
+    }
+
+    [TestMethod]
+    public async Task CRUD_pass()
+    {
+        //arrange
+        string name = $"Todo-a-{Guid.NewGuid()}";
+        var todo = new TodoItemDto
         {
-            Console.WriteLine(testContext.TestName);
+            Name = name
+        };
 
-            //Arrange for all tests
-            _client = Utility.GetClient<SampleApp.Api.Startup>();
-        }
+        //act
 
-        //html endpoints return success and correct content type
-        [DataTestMethod]
-        [DataRow("swagger", HttpStatusCode.OK, "text/html; charset=utf-8")]
-        [DataRow("index.html", HttpStatusCode.OK, "text/html")]
-        public async Task Get_BasicEndpoints_pass(string url, HttpStatusCode expectedStatusCode, string contentType)
-        {
-            // Act
-            (HttpResponseMessage httpResponse, _) = await _client.HttpRequestAndResponse<string, IHtmlDocument>(HttpMethod.Get, url, null);
+        //POST create (insert)
+        (var _, var parsedResponse) = await _client.HttpRequestAndResponse<TodoItemDto, TodoItemDto>(HttpMethod.Post, "api/todoitems", todo);
+        todo = parsedResponse;
+        Assert.IsNotNull(todo);
 
-            // Assert
-            httpResponse.EnsureSuccessStatusCode(); // Status Code 200-299
-            Assert.AreEqual(expectedStatusCode, httpResponse.StatusCode);
-            Assert.AreEqual(contentType, httpResponse.Content.Headers.ContentType?.ToString());
-        }
+        if (!Guid.TryParse(todo!.Id.ToString(), out Guid id)) throw new Exception("Invalid Guid");
+        Assert.IsTrue(id != Guid.Empty);
 
-        [TestMethod]
-        public async Task CRUD_pass()
-        {
-            //arrange
-            string name = $"Todo-a-{Guid.NewGuid()}";
-            var todo = new TodoItemDto
-            {
-                Name = name
-            };
+        //GET retrieve
+        (_, parsedResponse) = await _client.HttpRequestAndResponse<object, TodoItemDto>(HttpMethod.Get, $"api/todoitems/{id}", null);
+        Assert.AreEqual(id, parsedResponse?.Id);
 
-            //act
+        //PUT update
+        todo.Name = $"Update {name}";
+        (_, parsedResponse) = await _client.HttpRequestAndResponse<TodoItemDto, TodoItemDto>(HttpMethod.Put, $"api/todoitems/{id}", todo);
+        Assert.AreEqual(todo.Name, parsedResponse?.Name);
 
-            //POST create (insert)
-            (var _, var parsedResponse) = await _client.HttpRequestAndResponse<TodoItemDto, TodoItemDto>(HttpMethod.Post, "api/todoitems", todo);
-            todo = parsedResponse;
-            Assert.IsNotNull(todo);
+        //GET retrieve
+        (_, parsedResponse) = await _client.HttpRequestAndResponse<object, TodoItemDto>(HttpMethod.Get, $"api/todoitems/{id}", null);
+        Assert.AreEqual(todo.Name, parsedResponse?.Name);
 
-            if (!Guid.TryParse(todo!.Id.ToString(), out Guid id)) throw new Exception("Invalid Guid");
-            Assert.IsTrue(id != default);
+        //DELETE
+        (var httpResponse, _) = await _client.HttpRequestAndResponse<object, object>(HttpMethod.Delete, $"api/todoitems/{id}", null);
+        Assert.AreEqual(HttpStatusCode.OK, httpResponse.StatusCode);
 
-            //GET retrieve
-            (_, parsedResponse) = await _client.HttpRequestAndResponse<object, TodoItemDto>(HttpMethod.Get, $"api/todoitems/{id}", null);
-            Assert.AreEqual(id, parsedResponse?.Id);
+        //GET (NotFound) - ensure deleted
+        (httpResponse, _) = await _client.HttpRequestAndResponse<object, TodoItemDto>(HttpMethod.Get, $"api/todoitems/{id}", null, null, false);
+        Assert.AreEqual(HttpStatusCode.NotFound, httpResponse.StatusCode);
 
-            //PUT update
-            todo.Name = $"Update {name}";
-            (_, parsedResponse) = await _client.HttpRequestAndResponse<TodoItemDto, TodoItemDto>(HttpMethod.Put, $"api/todoitems/{id}", todo);
-            Assert.AreEqual(todo.Name, parsedResponse?.Name);
-
-            //GET retrieve
-            (_, parsedResponse) = await _client.HttpRequestAndResponse<object, TodoItemDto>(HttpMethod.Get, $"api/todoitems/{id}", null);
-            Assert.AreEqual(todo.Name, parsedResponse?.Name);
-
-            //DELETE
-            (var httpResponse, _) = await _client.HttpRequestAndResponse<object, object>(HttpMethod.Delete, $"api/todoitems/{id}", null);
-            Assert.AreEqual(HttpStatusCode.OK, httpResponse.StatusCode);
-
-            //GET (NotFound) - ensure deleted
-            (httpResponse, _) = await _client.HttpRequestAndResponse<object, TodoItemDto>(HttpMethod.Get, $"api/todoitems/{id}", null, null, false);
-            Assert.AreEqual(HttpStatusCode.NotFound, httpResponse.StatusCode);
-
-        }
     }
 }

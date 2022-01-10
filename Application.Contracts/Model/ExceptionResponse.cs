@@ -1,7 +1,6 @@
-﻿namespace Application.Contracts.Model
+﻿namespace Application.Contracts.Model;
+
+public class ExceptionResponse
 {
-    public class ExceptionResponse
-    {
-        public string Message { get; set; } = null!;
-    }
+    public string Message { get; set; } = null!;
 }
