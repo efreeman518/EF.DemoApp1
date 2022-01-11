@@ -1,16 +1,7 @@
-﻿using Application.Contracts.Model;
-using Application.Contracts.Services;
-using AutoMapper;
-using Domain.Model;
-using Domain.Rules;
-using Infrastructure.Repositories;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using Domain.Rules;
 using Package.Infrastructure.Utility.Exceptions;
-using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using System.Threading.Tasks;
 using AppConstants = Application.Contracts.Constants.Constants;
 using DomainConstants = Domain.Shared.Constants.Constants;
 

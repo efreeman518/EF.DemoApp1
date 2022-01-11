@@ -12,4 +12,17 @@
     <ProjectReference Include="..\Package\Package.Infrastructure.Data\Package.Infrastructure.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="Domain.Model" />
+    <Using Include="Infrastructure.Data" />
+    <Using Include="System" />
+    <Using Include="System.Threading.Tasks" />
+    <Using Include="Microsoft.EntityFrameworkCore" />
+    <Using Include="System.Collections.Generic" />
+    <Using Include="System.Linq" />
+    <Using Include="Domain.Model" />
+    <Using Include="System.Linq.Expressions" />
+    <Using Include="System.Linq" />
+  </ItemGroup>
+  
 </Project>

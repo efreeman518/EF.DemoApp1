@@ -1,14 +1,6 @@
-﻿using Domain.Model;
-using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Package.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
+﻿using Package.Infrastructure.Data;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories;
 
