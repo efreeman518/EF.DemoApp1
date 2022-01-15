@@ -1,6 +1,6 @@
 ﻿namespace Domain.Shared.Enums;
 
-public enum Status
+public enum TodoItemStatus
 {
     None = 0,
     Created = 1,

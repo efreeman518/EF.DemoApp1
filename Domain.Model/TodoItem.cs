@@ -8,5 +8,5 @@ public class TodoItem : EntityBase
 {
     public string Name { get; set; } = null!;
     public bool IsComplete { get; set; }
-    public Status Status { get; set; }
+    public TodoItemStatus Status { get; set; }
 }

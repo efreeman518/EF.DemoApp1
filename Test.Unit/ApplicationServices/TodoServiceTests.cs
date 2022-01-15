@@ -40,7 +40,7 @@ public class TodoServiceTests : UnitTestBase
     {
         //arrange
         string name = "wash car";
-        var dbTodo = new TodoItem { Id = Guid.NewGuid(), Name = name, Status = Status.Accepted };
+        var dbTodo = new TodoItem { Id = Guid.NewGuid(), Name = name, Status = TodoItemStatus.Accepted };
 
         RepositoryMock.Setup(
             r => r.GetItemAsync(It.IsAny<Expression<Func<TodoItem, bool>>>(), It.IsAny<CancellationToken>()))
