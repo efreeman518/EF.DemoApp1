@@ -1,11 +1,6 @@
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
-using System;
 using System.Diagnostics;
-using System.Reflection;
-using TechTalk.SpecFlow;
 
 namespace Test.SpecFlow.Specs.StepDefinitions
 {
@@ -13,41 +8,24 @@ namespace Test.SpecFlow.Specs.StepDefinitions
     /// https://www.selenium.dev/documentation/webdriver/elements/finders/
     /// </summary>
     [Binding]
-    public class TodoItemUIStepDefinitions
+    public class TodoItemUIStepDefinitions : SeleniumTestBase
     {
-        protected IWebDriver _webDriver;
-        protected WebDriverWait _waitMax10Seconds;
-        private readonly ScenarioContext _scenarioContext;
-
-        private static Random random = new Random();
-
-        public static string RandomString(int length)
+        public TodoItemUIStepDefinitions(ScenarioContext scenarioContext): base(scenarioContext)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
-        public TodoItemUIStepDefinitions(ScenarioContext scenarioContext)
-        {
-            _scenarioContext = scenarioContext;
-            //https://github.com/rosolko/WebDriverManager.Net
-            //new DriverManager().SetUpDriver(new ChromeConfig());
-
-            //chrome driver download: http://chromedriver.storage.googleapis.com/index.html
-            //put the chromedriver.exe in the /drivers folder, properties - Copy to Output folder, and note the version here:
-            // var chromeVersion = "97.0.4692.71";
-
-            _webDriver = new ChromeDriver(); // $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\\Chrome\\{chromeVersion}\\X64");
-            _waitMax10Seconds = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(10));
             _scenarioContext["random"] = RandomString(5);
-
         }
 
-        [Given(@"user navigates to url")]
-        public void GivenNavigate()
+        [Given(@"the client configuration (.*)")]
+        public void GivenTheClientConfiguration(string browser)
         {
-            _webDriver.Navigate().GoToUrl("https://localhost:44318/");
+            _webDriver = CreateDriver(browser);
+        }
+
+
+        [Given(@"user browser navigates to (.*)")]
+        public void GivenNavigate(string url)
+        {
+            _webDriver.Navigate().GoToUrl(url);
             Assert.IsTrue(_webDriver.Title.Contains("SampleApp - Todo CRUD"));
         }
 
@@ -103,9 +81,9 @@ namespace Test.SpecFlow.Specs.StepDefinitions
         [Then(@"verify the item complete box is checked in the list")]
         public void ThenVerifyTheItemCompleteBoxIsCheckedInTheList()
         {
+            Thread.Sleep(1000); //wait for refresh with same elements, otherwise next line finds the old element which is stale on the following GetAttribute()
             var found = _waitMax10Seconds.Until(ExpectedConditions.ElementExists(By.XPath("//*[@id='todos']/tr[td[contains(text(),'" + _scenarioContext["value"] + "')]]/td/input[@type='checkbox']")));
-            Debug.WriteLine("_" + found.GetAttribute("checked") + "=");
-            //Assert.IsTrue(bool.Parse(found.GetAttribute("checked")));
+            Assert.IsTrue(bool.Parse(found.GetAttribute("checked"))); //OpenQA.Selenium.StaleElementReferenceException: 'stale element reference: element is not attached to the page document'
         }
 
         [When(@"user clicks the delete button for this item")]
@@ -120,7 +98,7 @@ namespace Test.SpecFlow.Specs.StepDefinitions
         {
             try
             {
-                var found = _webDriver.FindElement(By.XPath("//tbody[@id='todos']/tr[td[contains(text(),'" + _scenarioContext["value"] + "')]]"));
+                _ = _webDriver.FindElement(By.XPath("//tbody[@id='todos']/tr[td[contains(text(),'" + _scenarioContext["value"] + "')]]"));
             }
             catch (NoSuchElementException)
             {
@@ -128,7 +106,6 @@ namespace Test.SpecFlow.Specs.StepDefinitions
                 Assert.IsTrue(true);
             }
         }
-
 
     }
 }

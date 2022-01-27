@@ -3,7 +3,8 @@
 
 @tag1
 Scenario: TodoItem CRUD
-	Given user navigates to url
+	Given the client configuration chrome
+	Given user browser navigates to https://localhost:44318/
 	When enters todoItemName in textbox and clicks Add
 	Then verify the item exists in the list
 	When user clicks the edit button for this item
