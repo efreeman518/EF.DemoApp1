@@ -1,23 +1,20 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
-using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
 
 namespace Test.SpecFlow.Specs;
 
 public class SeleniumTestBase : IDisposable
 {
-    protected IWebDriver _webDriver;
-    protected WebDriverWait _waitMax10Seconds;
     protected ScenarioContext _scenarioContext;
-
+    protected IWebDriver _driver;
+    protected WebDriverWait _waitMax10Seconds;
     private static readonly Random random = new();
 
     public SeleniumTestBase(ScenarioContext scenarioContext)
     {
-        _scenarioContext = scenarioContext;       
+        _scenarioContext = scenarioContext;
     }
 
     public static string RandomString(int length)
@@ -27,34 +24,31 @@ public class SeleniumTestBase : IDisposable
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
-    public IWebDriver CreateDriver(string browser = "Chrome")
+    public void CreateDriver(string browser = "Chrome")
     {
-        if (_webDriver != null && browser != _scenarioContext["browser"]?.ToString())
+        if (_driver != null && browser != _scenarioContext.Get<string>("browser")?.ToString())
         {
-            _webDriver.Quit();
-            _webDriver.Dispose();
+            _driver.Quit();
         }
 
-        _scenarioContext["browser"] = browser;
-
-        _webDriver = browser switch
+        _driver = browser switch
         {
-            "Firefox" => new FirefoxDriver(),
-            "IE" => new InternetExplorerDriver(),
             "Edge" => new EdgeDriver(),
+            //"Firefox" => new FirefoxDriver(),
+            //"IE" => new InternetExplorerDriver(),
             _ => new ChromeDriver(),
         };
-        _waitMax10Seconds = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(10));
 
-        return _webDriver;
+        if(!_scenarioContext.TryAdd("browser",browser)) _scenarioContext.Set(browser, "browser");
+        _waitMax10Seconds = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
     }
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing && _webDriver != null)
+        if (disposing && _driver != null)
         {
-            _webDriver.Quit();
-            _webDriver.Dispose();
+            _driver.Quit();
+            _driver.Dispose();
         }
     }
 
