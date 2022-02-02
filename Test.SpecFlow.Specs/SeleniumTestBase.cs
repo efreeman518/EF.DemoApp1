@@ -31,15 +31,37 @@ public class SeleniumTestBase : IDisposable
             _driver.Quit();
         }
 
+        var chromeOptions = new ChromeOptions();
+        chromeOptions.AddArguments(new List<string>
+        {
+            "--silent-launch",
+            "--no-startup-window",
+            "no-sandbox",
+            "headless"
+        });
+
+        var edgeOptions = new EdgeOptions();
+        edgeOptions.AddArguments(new List<string>
+        {
+           "disable-gpu",
+            "headless"
+        });
+
+        //var firefoxOptions = new FirefoxOptions();
+        //firefoxOptions.AddArguments(new List<string>
+        //{
+        //    "--headless"
+        //});
+
         _driver = browser switch
         {
-            "Edge" => new EdgeDriver(),
-            //"Firefox" => new FirefoxDriver(),
+            "Edge" => new EdgeDriver(edgeOptions),
+            //"Firefox" => new FirefoxDriver(firefoxOptions),
             //"IE" => new InternetExplorerDriver(),
-            _ => new ChromeDriver(),
+            _ => new ChromeDriver(chromeOptions),
         };
 
-        if(!_scenarioContext.TryAdd("browser",browser)) _scenarioContext.Set(browser, "browser");
+        if (!_scenarioContext.TryAdd("browser",browser)) _scenarioContext.Set(browser, "browser");
         _waitMax10Seconds = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
     }
 
