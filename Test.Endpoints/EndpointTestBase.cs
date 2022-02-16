@@ -9,6 +9,10 @@ namespace Test.Endpoints;
 [TestClass]
 public abstract class EndpointTestBase
 {
-    protected EndpointTestBase() { }
-    protected static IConfigurationRoot Config => Utility.Config;
+    protected IConfigurationRoot _config;
+
+    protected EndpointTestBase()
+    {
+        _config = Utility.GetConfiguration();
+    }
 }

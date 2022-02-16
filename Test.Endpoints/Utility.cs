@@ -26,8 +26,34 @@ namespace Test.Endpoints;
 /// </summary>
 public static class Utility
 {
-    public static readonly IConfigurationRoot Config = BuildConfiguration();
+    private static IConfigurationRoot? _config = null;
     private static readonly ConcurrentDictionary<string, IDisposable> _factories = new();
+
+    public static IConfigurationRoot GetConfiguration()
+    {
+        if( _config != null ) return _config;
+
+        var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettingsPre.json", true) //test project settings
+            .AddJsonFile("appsettings.json", false); //from api
+            
+
+        IConfigurationRoot config = builder.Build();
+        string env = config.GetValue<string>("Environment", "development");
+        var isDevelopment = env?.ToLower() == "development";
+        if (env != null)
+        {
+            builder.AddJsonFile($"appsettings.{env}.json", true);
+        }
+        builder
+            .AddJsonFile("appsettingsPost.json", true) //test project override any api settings
+            .AddEnvironmentVariables(); //pipeline can override settings
+
+        if (isDevelopment) builder.AddUserSecrets<EndpointTestBase>();
+        _config = builder.Build();
+
+        return _config;
+    }
 
     public static HttpClient GetClient<TEntryPoint>(bool allowAutoRedirect = true, string baseAddress = "http://localhost")
         where TEntryPoint : class
@@ -86,23 +112,6 @@ public static class Utility
                 }
             }
         }
-    }
-
-    public static IConfigurationRoot BuildConfiguration()
-    {
-        var devEnvironmentVariable = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-        var isDevelopment = devEnvironmentVariable?.ToLower() == "development";
-
-        Console.Write($"Env var DOTNET_ENVIRONMENT = {devEnvironmentVariable}");
-
-        var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-            .AddEnvironmentVariables()
-            .AddJsonFile("appsettings.json");
-
-        if (isDevelopment) builder.AddUserSecrets<EndpointTestBase>();
-        IConfigurationRoot config = builder.Build();
-
-        return config;
     }
 
     #region InMemory DbContext
