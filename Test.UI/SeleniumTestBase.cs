@@ -45,8 +45,8 @@ public abstract class SeleniumTestBase : IDisposable
     public static IConfigurationRoot BuildConfiguration()
     {
         var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json");
-
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables();
         IConfigurationRoot config = builder.Build();
 
         return config;
