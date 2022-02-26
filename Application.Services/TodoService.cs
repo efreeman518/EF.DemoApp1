@@ -1,6 +1,8 @@
 ﻿using Domain.Rules;
 using Package.Infrastructure.Utility.Exceptions;
+using Package.Infrastructure.Utility.Extensions;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text.Json;
 using AppConstants = Application.Contracts.Constants.Constants;
 using DomainConstants = Domain.Shared.Constants.Constants;
@@ -23,7 +25,10 @@ public class TodoService : ServiceBase, ITodoService
 
     public async Task<PagedResponse<TodoItemDto>> GetItemsAsync(int pageSize = 10, int pageIndex = 0)
     {
+        //normal structured logging
         Logger.Log(LogLevel.Information, "GetItemsAsync - pageSize:{pageSize} pageIndex:{pageIndex}", pageSize, pageIndex);
+        //performant logging
+        Logger.InfoLog($"GetItemsAsync Start - pageSize:{pageSize} pageIndex:{pageIndex}");
 
         _ = _settings.IntValue;
 

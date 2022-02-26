@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-namespace Application.Services;
+﻿namespace Application.Services;
 
 public abstract class ServiceBase
 {

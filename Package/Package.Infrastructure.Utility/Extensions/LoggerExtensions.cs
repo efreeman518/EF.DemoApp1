@@ -6,6 +6,40 @@ namespace Package.Infrastructure.Utility.Extensions;
 
 public static class LoggerExtensions
 {
+    //Performant Logging
+    //https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/loggermessage?view=aspnetcore-6.0
+    private static readonly Action<ILogger, string, Exception?> _infoLog;
+    private static readonly Action<ILogger, string, Exception?> _errorLog;
+    private static readonly Action<ILogger, string, string, string?, string?, Exception?> _extLog;
+
+    static LoggerExtensions()
+    {
+        _infoLog = LoggerMessage.Define<string>(
+            LogLevel.Information, new EventId(1, nameof(InfoLog)),
+            "{message}");
+        _errorLog = LoggerMessage.Define<string>(
+            LogLevel.Error, new EventId(1, nameof(ErrorLog)),
+            "{message}");
+        _extLog = LoggerMessage.Define<string, string, string?, string?>(
+            LogLevel.Information, new EventId(1, nameof(ExtLog)),
+            "{message} {param1} {param2} {param3}");
+
+    }
+    public static void InfoLog(this ILogger logger, string message)
+    {
+        _infoLog(logger, message, null);
+    }
+
+    public static void ErrorLog(this ILogger logger, string message, Exception ex)
+    {
+        _errorLog(logger, message, ex);
+    }
+
+    public static void ExtLog(this ILogger logger, string message, string param1, string? param2, string? param3, Exception? ex)
+    {
+        _extLog(logger, message, param1, param2, param3, ex);
+    }
+
     /// <summary>
     /// 
     /// </summary>
