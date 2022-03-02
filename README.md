@@ -1,9 +1,9 @@
 # Introduction 
 .net6 C# Sample App - A modern distributed DDD service api template
 
-#Prerequisites
-[Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
-[.net6 sdk](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+# Prerequisites
+1. [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
+2. [.net6 sdk](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 
 # Getting Started
 1.	Clone, set the startup project to Api/AmpleApp.Api, and run - swagger page opens, using the same port and root folder shows a basic js UI
