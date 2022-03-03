@@ -6,7 +6,7 @@
 2. [.net6 sdk](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 
 # Getting Started
-1.	Clone, set the startup project to Api/AmpleApp.Api, and run - swagger page opens, using the same port and root folder shows a basic js UI
+1.	Clone, set the startup project to Api/SampleApp.Api, and run - swagger page opens, using the same port and root folder shows a basic js UI
 2.	Run tests (Test.UI & Test.SpecFlow.Specs UI feature tests require the app to be running in order to run the Selenium UI tests)
 
 # Notes
