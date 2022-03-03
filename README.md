@@ -1,5 +1,5 @@
 # Introduction 
-.net6 C# Sample App - A modern distributed DDD service api template
+.net6 C# Sample App - A modern distributed domain-centric service api template
 
 # Prerequisites
 1. [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
