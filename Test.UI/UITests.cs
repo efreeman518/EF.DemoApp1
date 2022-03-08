@@ -5,7 +5,7 @@ using SeleniumExtras.WaitHelpers;
 
 namespace Test.UI;
 
-[Ignore("api needs to be running somewhere")]
+//[Ignore("api needs to be running somewhere")]
 [TestClass]
 public class UITests : SeleniumTestBase
 {

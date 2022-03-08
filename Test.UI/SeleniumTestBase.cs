@@ -24,15 +24,17 @@ public abstract class SeleniumTestBase : IDisposable
 
     protected SeleniumTestBase()
     {
+        _config = BuildConfiguration();
+
         //https://github.com/rosolko/WebDriverManager.Net
-        new DriverManager().SetUpDriver(new ChromeConfig());
+        //new DriverManager().SetUpDriver(new ChromeConfig());
 
         //chrome driver download: http://chromedriver.storage.googleapis.com/index.html
         //put the chromedriver.exe in the /drivers folder, properties - Copy to Output folder, and note the version here:
-        var chromeVersion = "97.0.4692.71";
+        //var chromeVersion = "97.0.4692.71";
+        //_webDriver = new ChromeDriver($"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\\Chrome\\{chromeVersion}\\X64");
 
-        _config = BuildConfiguration();
-        _webDriver = new ChromeDriver($"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\\Chrome\\{chromeVersion}\\X64");
+        _webDriver = new ChromeDriver();
         _waitMax10Seconds = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(10));
     }
 
