@@ -6,9 +6,14 @@ namespace Test.Integration;
 
 public static class Utility
 {
-    public static readonly IConfigurationRoot Config = BuildConfiguration();
+    public static readonly IConfigurationRoot Config;
 
-    public static IConfigurationRoot BuildConfiguration()
+    static Utility()
+    {
+        Config = BuildConfiguration();
+    }
+
+    private static IConfigurationRoot BuildConfiguration()
     {
         var devEnvironmentVariable = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
         var isDevelopment = devEnvironmentVariable?.ToLower() == "development";

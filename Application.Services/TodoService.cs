@@ -2,7 +2,6 @@
 using Package.Infrastructure.Utility.Exceptions;
 using Package.Infrastructure.Utility.Extensions;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Text.Json;
 using AppConstants = Application.Contracts.Constants.Constants;
 using DomainConstants = Domain.Shared.Constants.Constants;

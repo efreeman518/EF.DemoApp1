@@ -26,6 +26,7 @@ public abstract class ServiceTestBase
         new SampleApp.Bootstrapper.Startup(Config).ConfigureServices(services);
 
         //add logging for integration tests
+        services.AddApplicationInsightsTelemetryWorkerService(Config);
         services.AddLogging(configure => configure.AddConsole().AddDebug().AddApplicationInsights());
 
         //build IServiceProvider for subsequent use finding/injecting services
